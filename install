@@ -7,8 +7,7 @@
 # systems. This script also requires the readlink and mktemp utilities.
 
 
-usage()
-{
+usage() {
 cat << EOF
 Usage $0 [OPTION]...
 
