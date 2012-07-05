@@ -2,3 +2,38 @@
 =====
 
 This is my home. There are many like it, but this one is mine.
+
+This repository contains dotfiles, scripts, and plugins that personalize my
+Linux environment.
+
+
+Install
+-------
+
+    git clone git://github.com/peterlundgren/.home.git ~/.home
+    cd ~/.home
+    ./install
+
+You may clone the repository into a different directory if you prefer. It does
+not need to be located in `~/.home`.
+
+
+Installation Behavior
+---------------------
+
+Each file in this directory structure will get symlinked into your `$HOME` at
+its corresponding location. Any directories beginning with `_` are collapsed
+into its parent directory and are only used for organizing this repository. So,
+for example:
+
+*   `~/.home/bin/bbeep` gets linked from `~/bin/bbeep`.
+*   `~/.home/_zsh/.zshrc` gets linked from `~/.zshrc`.
+*   `~/.home/_git/.zsh/git-completion.sh` gets linked from
+    `~/.zsh/git-completion.sh`.
+
+
+Uninstall
+---------
+
+    cd ~/.home
+    ./uninstall
