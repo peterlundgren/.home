@@ -31,6 +31,13 @@ for example:
 *   `~/.home/_git/.zsh/git-completion.sh` gets linked from
     `~/.zsh/git-completion.sh`.
 
+If any of the files already exist at the destination, you will be prompted to
+skip, overwrite, or backup that file.
+
+Files specified in `.homeignore` will be ignored. Each pattern is specified on
+its own line. See the `-path` description in the `find` manpage for a
+description of the syntax used.
+
 
 Uninstall
 ---------

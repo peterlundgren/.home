@@ -1,0 +1,7 @@
+.homeignore
+backup.*
+install
+README.md
+.git*
+*.sw[a-z]
+*~

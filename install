@@ -1,0 +1,213 @@
+#!/bin/bash
+
+
+# Installation script for .home.
+#
+# Written as a bash script to be reasonably portable to different POSIX
+# systems. This script also requires the readlink and mktemp utilities.
+
+
+usage()
+{
+cat << EOF
+Usage $0 [OPTION]...
+
+Install to \$HOME.
+
+Each file in this directory structure will get symlinked into your '\$HOME' at
+its corresponding location. Any directories beginning with '_' are collapsed
+into its parent directory and are only used for organizing this repository. So,
+for example:
+
+*   '~/.home/bin/bbeep' gets linked from '~/bin/bbeep'.
+*   '~/.home/_zsh/.zshrc' gets linked from '~/.zshrc'.
+*   '~/.home/_git/.zsh/git-completion.sh' gets linked from
+    '~/.zsh/git-completion.sh'.
+
+If any of the files already exist at the destination, you will be prompted to
+skip, overwrite, or backup that file.
+
+Files specified in '.homeignore' will be ignored. Each pattern is specified on
+its own line. See the '-path' description in the 'find' manpage for a
+description of the syntax used.
+
+OPTIONS:
+  -b BACKUP       Backup to BACKUP instead of DESTINATION/.home.
+  -d DESTINATION  Install to DESTINATION instead of \$HOME.
+  -h              Show this message and exit.
+  -n              Dry run. Don't actually install, just show what would be
+                  installed.
+  -v              Be verbose.
+  -B              Backup all. If any file already exists at the destination, do
+                  not prompt and backup the original file.
+  -O              Overwrite all. If any file already exists at the destination,
+                  do not prompt and overwrite the original file.
+  -S              Skip all. If any file already exists at the destination, do
+                  not prompt and skip installing that file.
+EOF
+}
+
+
+function check_command_exists {
+    if ! command -v $1 >/dev/null 2>&1
+    then
+        echo >&2 "Error: I require $1 but it's not installed."
+        exit 1
+    fi
+}
+check_command_exists readlink
+check_command_exists mktemp
+
+
+DESTINATION=$HOME
+BACKUP_ROOT=$DESTINATION/.home
+DRY_RUN=false
+VERBOSE=false
+prompt_on_conflict=true
+while getopts b:d:hnvBOS option
+    do  case "$option" in
+        b)
+            BACKUP_ROOT=$OPTARG
+            ;;
+        d)
+            DESTINATION=$OPTARG
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        n)
+            DRY_RUN=true
+            ;;
+        v)
+            VERBOSE=true
+            ;;
+        B)
+            prompt_on_conflict=false
+            conflict_resolution=b
+            ;;
+        O)
+            prompt_on_conflict=false
+            conflict_resolution=o
+            ;;
+        S)
+            prompt_on_conflict=false
+            conflict_resolution=s
+            ;;
+        ?)
+            exit 1
+            ;;
+    esac
+done
+$VERBOSE && echo Installing to $DESTINATION
+$VERBOSE && echo Backing up to $BACKUP_ROOT
+
+
+backup_dir=$BACKUP_ROOT/backup.XXXXXX
+made_backup_dir=false
+function make_backup_dir {
+    if ! $made_backup_dir
+    then
+        $VERBOSE && echo Making backup dir: $backup_dir
+        $VERBOSE && echo % mkdir -p $BACKUP_ROOT
+        $DRY_RUN || mkdir -p $BACKUP_ROOT || exit 1
+        $VERBOSE && echo % mktemp -d -p $BACKUP_ROOT backup.XXXXXX
+        $DRY_RUN || backup_dir="$(mktemp -d -p $BACKUP_ROOT backup.XXXXXX)" || exit 1
+        made_backup_dir=true
+    fi
+}
+
+
+function prompt {
+    if $prompt_on_conflict
+    then
+        echo "File $1 already exists, what do you want to do?"
+        echo "[s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup (default), [B]ackup all"
+        read -e conflict_resolution
+        if [ $conflict_resolution = "" ]
+        then
+            conflict_resolution=b
+        fi
+        conflict_resolution=${conflict_resolution:0:1}
+        case $conflict_resolution in
+            b)
+                ;;
+            o)
+                ;;
+            s)
+                ;;
+            B)
+                prompt_on_conflict=false
+                conflict_resolution=b
+                ;;
+            O)
+                prompt_on_conflict=false
+                conflict_resolution=o
+                ;;
+            S)
+                prompt_on_conflict=false
+                conflict_resolution=s
+                ;;
+            ?)
+                echo "I didn't understand '$conflict_resolution'."
+                prompt
+                ;;
+        esac
+    fi
+}
+
+
+function install_link {
+    if [ -e $link_name ]
+    then
+        if [ `readlink -m $link_name` = $target ]
+        then
+            $VERBOSE && echo "Nothing to be done for $link_name -> $target"
+            return
+        fi
+        prompt $link_name
+        case $conflict_resolution in
+            b)
+                ($DRY_RUN || $VERBOSE) && echo "Backing up $link_name"
+                make_backup_dir
+                backup=$backup_dir/$suffix
+                $VERBOSE && echo "% mv $link_name $backup"
+                $DRY_RUN || mv $link_name $backup || exit 1
+                ;;
+            o)
+                ($DRY_RUN || $VERBOSE) && echo "Overwriting $link_name"
+                $VERBOSE && echo "% rm $link_name"
+                $DRY_RUN || rm $link_name || exit 1
+                ;;
+            s)
+                ($DRY_RUN || $VERBOSE) && echo "Skipping $link_name"
+                return
+                ;;
+        esac
+    fi
+    ($DRY_RUN || $VERBOSE) && echo "Installing $link_name -> $target"
+    $VERBOSE && echo "% mkdir -p ${link_name%/*}"
+    $DRY_RUN || mkdir -p ${link_name%/*} || exit 1
+    $VERBOSE && echo "% ln -s $target $link_name"
+    $DRY_RUN || ln -s $target $link_name || exit 1
+}
+
+
+# Collect a list of files relative to the current directory ignoring the files
+# specified in .homeignore using find. The ignore rules are implemented using a
+# negated -path option to find for each line in .homeignore. This builds up a
+# command like:
+#
+# find . -type f \! -path ./ignore/me \! -path ./ignore/me/too
+files="$(sed -e 's/^/\\! -path .\//' .homeignore | xargs find . -type f)"
+for file in $files
+do
+    # Remove directories starting with '_'.
+    # ./a/_b/c/_d/e becomes ./a/c/e
+    suffix="$(echo $file | sed -e 's/_[^\/]*\///g')"
+    # Remove the './'
+    suffix=${suffix:2}
+    link_name=$DESTINATION/$suffix
+    target="$(readlink -m $file)"
+    install_link
+done
