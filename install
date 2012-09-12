@@ -124,7 +124,7 @@ function prompt {
         echo "File $1 already exists, what do you want to do?"
         echo "[s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup (default), [B]ackup all"
         read -e conflict_resolution
-        if [ $conflict_resolution = "" ]
+        if [ "$conflict_resolution" = "" ]
         then
             conflict_resolution=b
         fi
