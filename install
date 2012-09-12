@@ -150,7 +150,7 @@ function prompt {
                 ;;
             ?)
                 echo "I didn't understand '$conflict_resolution'."
-                prompt
+                prompt $1
                 ;;
         esac
     fi
