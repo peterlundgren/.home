@@ -60,7 +60,7 @@ check_command_exists mktemp
 
 
 DESTINATION=$HOME
-BACKUP_ROOT=$DESTINATION/.home
+default_backup=true
 DRY_RUN=false
 VERBOSE=false
 prompt_on_conflict=true
@@ -68,6 +68,7 @@ while getopts b:d:hnvBOS option
     do  case "$option" in
         b)
             BACKUP_ROOT=$OPTARG
+            default_backup=false
             ;;
         d)
             DESTINATION=$OPTARG
@@ -99,6 +100,10 @@ while getopts b:d:hnvBOS option
             ;;
     esac
 done
+if $default_backup
+then
+    BACKUP_ROOT=$DESTINATION/.home
+fi
 $VERBOSE && echo Installing to $DESTINATION
 $VERBOSE && echo Backing up to $BACKUP_ROOT
 
