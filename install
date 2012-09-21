@@ -35,8 +35,15 @@ OPTIONS:
   -b BACKUP       Backup to BACKUP instead of DESTINATION/.home.
   -d DESTINATION  Install to DESTINATION instead of \$HOME.
   -h              Show this message and exit.
-  -n              Dry run. Don't actually install, just show what would be
+  -n              Dry run. Do not actually install, just show what would be
                   installed.
+  -r BACKUP_DIR   Restore files from BACKUP_DIR. BACKUP_DIR should be one of
+                  the directories created in BACKUP of the form backup.XXXXXX
+                  (i.e. \$HOME/.home/backup.abcdef). Implies -u.
+  -u              Uninstall links to any files in this directory structure. Run
+                  from the same repository and with the same -d as the install.
+                  'install -r' will undo 'install -B'. Any directories created
+                  during the install will not be removed.
   -v              Be verbose.
   -B              Backup all. If any file already exists at the destination, do
                   not prompt and backup the original file.
@@ -62,9 +69,11 @@ check_command_exists mktemp
 DESTINATION=$HOME
 default_backup=true
 DRY_RUN=false
+RESTORE=false
+UNINSTALL=false
 VERBOSE=false
 prompt_on_conflict=true
-while getopts b:d:hnvBOS option
+while getopts b:d:hnr:uvBOS option
     do  case "$option" in
         b)
             BACKUP_ROOT=$OPTARG
@@ -79,6 +88,14 @@ while getopts b:d:hnvBOS option
             ;;
         n)
             DRY_RUN=true
+            ;;
+        r)
+            RESTORE_DIR=$OPTARG
+            RESTORE=true
+            UNINSTALL=true
+            ;;
+        u)
+            UNINSTALL=true
             ;;
         v)
             VERBOSE=true
@@ -123,6 +140,7 @@ function make_backup_dir {
 }
 
 
+# Returns 1 to indicate that the user responded with skip, 0 otherwise.
 function prompt {
     if $prompt_on_conflict
     then
@@ -134,31 +152,40 @@ function prompt {
             conflict_resolution=b
         fi
         conflict_resolution=${conflict_resolution:0:1}
-        case $conflict_resolution in
-            b)
-                ;;
-            o)
-                ;;
-            s)
-                ;;
-            B)
-                prompt_on_conflict=false
-                conflict_resolution=b
-                ;;
-            O)
-                prompt_on_conflict=false
-                conflict_resolution=o
-                ;;
-            S)
-                prompt_on_conflict=false
-                conflict_resolution=s
-                ;;
-            ?)
-                echo "I didn't understand '$conflict_resolution'."
-                prompt $1
-                ;;
-        esac
     fi
+    case $conflict_resolution in
+        B)
+            prompt_on_conflict=false
+            ;&
+        b)
+            ($DRY_RUN || $VERBOSE) && echo "Backing up $link_name"
+            make_backup_dir
+            backup=$backup_dir/$suffix
+            $VERBOSE && echo "% mkdir -p ${backup%/*}"
+            $DRY_RUN || mkdir -p ${backup%/*} || exit 1
+            $VERBOSE && echo "% mv $link_name $backup"
+            $DRY_RUN || mv $link_name $backup || exit 1
+            ;;
+        O)
+            prompt_on_conflict=false
+            ;&
+        o)
+            ($DRY_RUN || $VERBOSE) && echo "Overwriting $link_name"
+            $VERBOSE && echo "% rm $link_name"
+            $DRY_RUN || rm $link_name || exit 1
+            ;;
+        S)
+            prompt_on_conflict=false
+            ;&
+        s)
+            ($DRY_RUN || $VERBOSE) && echo "Skipping $link_name"
+            return 1
+            ;;
+        ?)
+            echo "I didn't understand '$conflict_resolution'."
+            prompt $1
+            ;;
+    esac
 }
 
 
@@ -170,31 +197,59 @@ function install_link {
             $VERBOSE && echo "Nothing to be done for $link_name -> $target"
             return
         fi
-        prompt $link_name
-        case $conflict_resolution in
-            b)
-                ($DRY_RUN || $VERBOSE) && echo "Backing up $link_name"
-                make_backup_dir
-                backup=$backup_dir/$suffix
-                $VERBOSE && echo "% mv $link_name $backup"
-                $DRY_RUN || mv $link_name $backup || exit 1
-                ;;
-            o)
-                ($DRY_RUN || $VERBOSE) && echo "Overwriting $link_name"
-                $VERBOSE && echo "% rm $link_name"
-                $DRY_RUN || rm $link_name || exit 1
-                ;;
-            s)
-                ($DRY_RUN || $VERBOSE) && echo "Skipping $link_name"
-                return
-                ;;
-        esac
+        if ! prompt $link_name
+        then
+            return
+        fi
     fi
     ($DRY_RUN || $VERBOSE) && echo "Installing $link_name -> $target"
     $VERBOSE && echo "% mkdir -p ${link_name%/*}"
     $DRY_RUN || mkdir -p ${link_name%/*} || exit 1
     $VERBOSE && echo "% ln -s $target $link_name"
     $DRY_RUN || ln -s $target $link_name || exit 1
+}
+
+
+function uninstall_link {
+    if [ -e $link_name ]
+    then
+        if [ `readlink -m $link_name` = $target ]
+        then
+            ($DRY_RUN || $VERBOSE) && echo "Uninstalling $link_name"
+            $VERBOSE && echo "% rm $link_name"
+            $DRY_RUN || rm $link_name || exit 1
+        fi
+    fi
+}
+
+
+function restore_file {
+    if [ -e $original_location ]
+    then
+        if ! prompt $original_location
+        then
+            return
+        fi
+    fi
+    ($DRY_RUN || $VERBOSE) && echo "Restoring $original_location"
+    $VERBOSE && echo "% mkdir -p ${original_location%/*}"
+    $DRY_RUN || mkdir -p ${original_location%/*} || exit 1
+    $VERBOSE && echo "% cp $file $original_location"
+    $DRY_RUN || cp $file $original_location || exit 1
+}
+
+
+function restore {
+    pushd 1>/dev/null $RESTORE_DIR || exit 1
+    files="$(find . -type f)"
+    for file in $files
+    do
+        # Remove the './'
+        suffix=${file:2}
+        original_location=$DESTINATION/$suffix
+        restore_file
+    done
+    popd 1>/dev/null || exit 1
 }
 
 
@@ -214,5 +269,14 @@ do
     suffix=${suffix:2}
     link_name=$DESTINATION/$suffix
     target="$(readlink -m $file)"
-    install_link
+    if $UNINSTALL
+    then
+        uninstall_link
+    else
+        install_link
+    fi
 done
+if $RESTORE
+then
+    restore
+fi

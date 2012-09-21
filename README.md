@@ -15,7 +15,7 @@ Install
     ./install
 
 You may clone the repository into a different directory if you prefer. It does
-not need to be located in `~/.home`.
+not need to be located in `~/.home`. See `install -h` for more options.
 
 
 Installation Behavior
@@ -42,5 +42,10 @@ description of the syntax used.
 Uninstall
 ---------
 
+To remove all of the installed symlinks and restore all files that were backed
+up, use `install -r`. To remove the symlinks without restoring files, use
+`install -u`.
+
     cd ~/.home
-    ./uninstall
+    ./install -r ~/.home/backup.abcde # Where backup.abcde is the backup you
+                                      # want to restore from.
