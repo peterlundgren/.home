@@ -1,0 +1,9 @@
+[user]
+    email = peter@peterlundgren.com
+    name = Peter Lundgren
+[color]
+    ui = true
+[core]
+    pager = less -FXRS
+    editor = vim
+    excludesfile = ~/.gitignore
