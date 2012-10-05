@@ -74,7 +74,8 @@ UNINSTALL=false
 VERBOSE=false
 prompt_on_conflict=true
 while getopts b:d:hnr:uvBOS option
-    do  case "$option" in
+do
+    case $option in
         b)
             BACKUP_ROOT=$OPTARG
             default_backup=false
@@ -100,17 +101,9 @@ while getopts b:d:hnr:uvBOS option
         v)
             VERBOSE=true
             ;;
-        B)
+        B|O|S)
             prompt_on_conflict=false
-            conflict_resolution=b
-            ;;
-        O)
-            prompt_on_conflict=false
-            conflict_resolution=o
-            ;;
-        S)
-            prompt_on_conflict=false
-            conflict_resolution=s
+            conflict_resolution=$option
             ;;
         ?)
             exit 1
@@ -140,6 +133,29 @@ function make_backup_dir {
 }
 
 
+function backup {
+    ($DRY_RUN || $VERBOSE) && echo "Backing up $link_name"
+    make_backup_dir
+    backup=$backup_dir/$suffix
+    $VERBOSE && echo "% mkdir -p ${backup%/*}"
+    $DRY_RUN || mkdir -p ${backup%/*} || exit 1
+    $VERBOSE && echo "% mv $link_name $backup"
+    $DRY_RUN || mv $link_name $backup || exit 1
+}
+
+
+function remove {
+    ($DRY_RUN || $VERBOSE) && echo "Overwriting $link_name"
+    $VERBOSE && echo "% rm $link_name"
+    $DRY_RUN || rm $link_name || exit 1
+}
+
+
+function skip {
+    ($DRY_RUN || $VERBOSE) && echo "Skipping $link_name"
+}
+
+
 # Returns 1 to indicate that the user responded with skip, 0 otherwise.
 function prompt {
     if $prompt_on_conflict
@@ -154,37 +170,13 @@ function prompt {
         conflict_resolution=${conflict_resolution:0:1}
     fi
     case $conflict_resolution in
-        B)
-            prompt_on_conflict=false
-            ;&
-        b)
-            ($DRY_RUN || $VERBOSE) && echo "Backing up $link_name"
-            make_backup_dir
-            backup=$backup_dir/$suffix
-            $VERBOSE && echo "% mkdir -p ${backup%/*}"
-            $DRY_RUN || mkdir -p ${backup%/*} || exit 1
-            $VERBOSE && echo "% mv $link_name $backup"
-            $DRY_RUN || mv $link_name $backup || exit 1
-            ;;
-        O)
-            prompt_on_conflict=false
-            ;&
-        o)
-            ($DRY_RUN || $VERBOSE) && echo "Overwriting $link_name"
-            $VERBOSE && echo "% rm $link_name"
-            $DRY_RUN || rm $link_name || exit 1
-            ;;
-        S)
-            prompt_on_conflict=false
-            ;&
-        s)
-            ($DRY_RUN || $VERBOSE) && echo "Skipping $link_name"
-            return 1
-            ;;
-        ?)
-            echo "I didn't understand '$conflict_resolution'."
-            prompt $1
-            ;;
+        B|O|S) prompt_on_conflict=false;;
+    esac
+    case $conflict_resolution in
+        B|b) backup;;
+        O|o) remove;;
+        S|s) skip; return 1;;
+        ?)   echo "I didn't understand '$conflict_resolution'."; prompt $1;;
     esac
 }
 
