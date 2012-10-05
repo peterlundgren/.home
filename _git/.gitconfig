@@ -7,3 +7,5 @@
     pager = less -FXRS
     editor = vim
     excludesfile = ~/.gitignore
+[push]
+    default = nothing
