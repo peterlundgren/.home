@@ -1,6 +1,10 @@
 " Make sure we're not trying to be Vi-compatible. This must be first.
 set nocompatible
 
+" Miscellaneous
+set cursorline
+set ruler
+set number
 set tabstop=4
 set shiftwidth=4
 set expandtab
