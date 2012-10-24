@@ -42,7 +42,7 @@ then
     fi
 
     # Set the GNOME Terminal profile to use solarized theme colors
-    if test $SOLARIZED_THEME && command -v gconftool-2 >/dev/null 2>&1
+    if command -v gconftool-2 >/dev/null 2>&1
     then
         # black, red, green, yellow, blue, magenta, cyan, white, brblack, brred, brgreen, bryellow, brblue, brmagenta, brcyan, brwhite
         palette="#070736364242:#D3D301010202:#858599990000:#B5B589890000:#26268B8BD2D2:#D3D336368282:#2A2AA1A19898:#EEEEE8E8D5D5:#00002B2B3636:#CBCB4B4B1616:#58586E6E7575:#65657B7B8383:#838394949696:#6C6C7171C4C4:#9393A1A1A1A1:#FDFDF6F6E3E3"
