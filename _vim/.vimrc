@@ -37,3 +37,20 @@ if !empty($SOLARIZED_THEME)
     let g:solarized_visibility="low"
     colorscheme solarized
 endif
+
+" Display unprintable characters
+set list
+
+" Change characters used by list
+" Symbols choosen from Basic Latin (ASCII) for terminal vim
+set listchars=
+set listchars+=eol:$
+set listchars+=tab:>-
+set listchars+=trail:*
+set listchars+=extends:>
+set listchars+=precedes:<
+set listchars+=nbsp:@
+
+" Highlight trailing whitespace and space before tab
+highlight ExtraWhitespace ctermbg=red ctermfg=white guibg=#dc322f guifg=#fdf6e3
+:match ExtraWhitespace /\s\+$\| \+\ze\t/
