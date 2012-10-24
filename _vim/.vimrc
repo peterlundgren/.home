@@ -1,3 +1,6 @@
+" Make sure we're not trying to be Vi-compatible. This must be first.
+set nocompatible
+
 set tabstop=4
 set shiftwidth=4
 set expandtab
