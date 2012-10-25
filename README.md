@@ -26,10 +26,9 @@ its corresponding location. Any directories beginning with `_` are collapsed
 into its parent directory and are only used for organizing this repository. So,
 for example:
 
-*   `~/.home/bin/bbeep` gets linked from `~/bin/bbeep`.
 *   `~/.home/_zsh/.zshrc` gets linked from `~/.zshrc`.
-*   `~/.home/_git/.zsh/git-completion.sh` gets linked from
-    `~/.zsh/git-completion.sh`.
+*   `~/.home/_git/.zsh/git.zsh` gets linked from `~/.zsh/git.zsh`
+*   `~/.home/_vim/.zsh/vim.zsh` gets linked from `~/.zsh/vim.zsh`
 
 If any of the files already exist at the destination, you will be prompted to
 skip, overwrite, or backup that file.
@@ -49,3 +48,16 @@ up, use `install -r`. To remove the symlinks without restoring files, use
     cd ~/.home
     ./install -r ~/.home/backup.abcde # Where backup.abcde is the backup you
                                       # want to restore from.
+
+
+Forking and Contributing
+------------------------
+
+This repository has two branches, `core` and `master`. `core` contains the
+installation script, related files, and documentation. `master` contains my own
+personal configuration. This should make it easy to merge upstream changes to
+`core` or to fork a repo with none of my configuration.
+
+Feel free to log issues or pull requests on [GitHub][].
+
+  [GitHub]: https://github.com/peterlundgren/.home
