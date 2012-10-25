@@ -26,10 +26,9 @@ its corresponding location. Any directories beginning with `_` are collapsed
 into its parent directory and are only used for organizing this repository. So,
 for example:
 
-*   `~/.home/bin/bbeep` gets linked from `~/bin/bbeep`.
 *   `~/.home/_zsh/.zshrc` gets linked from `~/.zshrc`.
-*   `~/.home/_git/.zsh/git-completion.sh` gets linked from
-    `~/.zsh/git-completion.sh`.
+*   `~/.home/_git/.zsh/git.zsh` gets linked from `~/.zsh/git.zsh`
+*   `~/.home/_vim/.zsh/vim.zsh` gets linked from `~/.zsh/vim.zsh`
 
 If any of the files already exist at the destination, you will be prompted to
 skip, overwrite, or backup that file.
