@@ -49,3 +49,16 @@ up, use `install -r`. To remove the symlinks without restoring files, use
     cd ~/.home
     ./install -r ~/.home/backup.abcde # Where backup.abcde is the backup you
                                       # want to restore from.
+
+
+Forking and Contributing
+------------------------
+
+This repository has two branches, `core` and `master`. `core` contains the
+installation script, related files, and documentation. `master` contains my own
+personal configuration. This should make it easy to merge upstream changes to
+`core` or to fork a repo with none of my configuration.
+
+Feel free to log issues or pull requests on [GitHub][].
+
+  [GitHub]: https://github.com/peterlundgren/.home
