@@ -1,6 +1,7 @@
 .homeignore
 backup.*
 install
+LICENSE.md
 README.md
 .git*
 *.sw[a-z]
