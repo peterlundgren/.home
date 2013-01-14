@@ -1,6 +1,9 @@
 " Make sure we're not trying to be Vi-compatible. This must be first.
 set nocompatible
 
+" Enable file-type detection and plugins
+filetype plugin on
+
 " Miscellaneous
 set cursorline
 set ruler
