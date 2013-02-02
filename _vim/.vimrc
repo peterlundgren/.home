@@ -59,9 +59,6 @@ set listchars+=extends:>
 set listchars+=precedes:<
 set listchars+=nbsp:@
 
-" Highlight trailing whitespace and space before tab
-highlight ExtraWhitespace ctermbg=red ctermfg=white guibg=#dc322f guifg=#fdf6e3
-
 " Call matchadd for all new windows
 "
 " :match only defines a match in the current window. In order to match across
@@ -75,5 +72,6 @@ autocmd VimEnter,WinEnter * if !exists('w:created') | call NewWindow() | endif
 function NewWindow()
     let w:created=1
     " -1 priority so hlsearch (priority 0) will override the match
-    call matchadd('ExtraWhitespace', '\s\+$\| \+\ze\t', -1)
+    " Highlight trailing whitespace and space before tab
+    call matchadd('ErrorMsg', '\s\+$\| \+\ze\t', -1)
 endfunction
