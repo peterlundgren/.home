@@ -50,7 +50,7 @@ endif
 set list
 
 " Change characters used by list
-" Symbols choosen from Basic Latin (ASCII) for terminal vim
+" Symbols chosen from Basic Latin (ASCII) for terminal vim
 set listchars=
 set listchars+=eol:$
 set listchars+=tab:>-
