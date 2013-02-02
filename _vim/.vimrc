@@ -59,6 +59,11 @@ set listchars+=extends:>
 set listchars+=precedes:<
 set listchars+=nbsp:@
 
+" Change background color after 80 columns
+if exists('+colorcolumn')
+    let &colorcolumn=join(range(81,999),",")
+endif
+
 " Call matchadd for all new windows
 "
 " :match only defines a match in the current window. In order to match across
@@ -72,6 +77,10 @@ autocmd VimEnter,WinEnter * if !exists('w:created') | call NewWindow() | endif
 function NewWindow()
     let w:created=1
     " -1 priority so hlsearch (priority 0) will override the match
+    " Alternate implementation of colorcolumn for older versions
+    if !exists('+colorcolumn')
+        call matchadd('CursorColumn', '\%>80v.\+', -1)
+    endif
     " Highlight trailing whitespace and space before tab
     call matchadd('ErrorMsg', '\s\+$\| \+\ze\t', -1)
 endfunction
