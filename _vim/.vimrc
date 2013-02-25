@@ -1,8 +1,8 @@
 " Make sure we're not trying to be Vi-compatible. This must be first.
 set nocompatible
 
-" Enable file-type detection and plugins
-filetype plugin on
+" Enable file-type detection, plugins, and auto indentation
+filetype plugin indent on
 
 " Miscellaneous
 set cursorline
