@@ -6,3 +6,4 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 
 " My Bundles
+Bundle 'nelstrom/vim-markdown-folding'
