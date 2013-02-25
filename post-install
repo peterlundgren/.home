@@ -1,0 +1,5 @@
+#! /bin/bash
+
+
+# Vundle install
+vim -u ~/.vim/bundles.vim +BundleInstall +qall

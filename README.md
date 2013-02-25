@@ -10,9 +10,9 @@ Linux environment.
 Install
 -------
 
-    git clone git://github.com/peterlundgren/.home.git ~/.home
+    git clone --recursive git://github.com/peterlundgren/.home.git ~/.home
     cd ~/.home
-    ./install
+    ./install && ./post-install
 
 You may clone the repository into a different directory if you prefer. It does
 not need to be located in `~/.home`. See `install -h` for more options.

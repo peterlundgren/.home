@@ -1,6 +1,9 @@
 " Make sure we're not trying to be Vi-compatible. This must be first.
 set nocompatible
 
+" Vundle and bundles configuration
+source ~/.vim/bundles.vim
+
 " Enable file-type detection, plugins, and auto indentation
 filetype plugin indent on
 
