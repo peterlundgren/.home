@@ -182,7 +182,7 @@ function prompt {
 
 
 function install_link {
-    if [ -e $link_name ]
+    if [ -e $link_name ] || [ -L $link_name ]
     then
         if [ `readlink -m $link_name` = $target ]
         then
