@@ -91,3 +91,5 @@ endfunction
 " Add git branch to status line
 " It is otherwise the same as the standard status line with 'ruler' set
 set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+" Always display status line
+set laststatus=2
