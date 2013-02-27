@@ -9,7 +9,6 @@ filetype plugin indent on
 
 " Miscellaneous
 set cursorline
-set ruler
 set number
 set tabstop=4
 set shiftwidth=4
@@ -88,3 +87,7 @@ function NewWindow()
     " Highlight trailing whitespace and space before tab
     call matchadd('ErrorMsg', '\s\+$\| \+\ze\t', -1)
 endfunction
+
+" Add git branch to status line
+" It is otherwise the same as the standard status line with 'ruler' set
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
