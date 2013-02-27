@@ -46,6 +46,7 @@ if !empty($SOLARIZED_THEME)
     execute "set background=".$SOLARIZED_THEME
     " Low visibility special characters
     let g:solarized_visibility="low"
+    let g:solarized_diffmode="high"
     colorscheme solarized
 endif
 
