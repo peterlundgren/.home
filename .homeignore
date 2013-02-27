@@ -1,6 +1,7 @@
 .homeignore
 backup.*
 install
+post-install
 LICENSE.md
 README.md
 .git*
