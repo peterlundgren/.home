@@ -49,6 +49,9 @@ if !empty($SOLARIZED_THEME)
     colorscheme solarized
 endif
 
+" Color SignColumn the same as number column
+highlight clear SignColumn
+
 " Display unprintable characters
 set list
 
