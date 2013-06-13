@@ -4,6 +4,8 @@ git_prompt_info() {
     echo " ${ref#refs/heads/}"
 }
 
+alias gd="git diff"
+alias gdw="git diff --word-diff=color"
 alias gl="git log -40 --decorate --graph --all --pretty=oneline --abbrev-commit"
 alias glp="git log --decorate -p"
 alias gls="git log --decorate --stat"
