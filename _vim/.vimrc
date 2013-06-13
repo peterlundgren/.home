@@ -7,6 +7,9 @@ source ~/.vim/bundles.vim
 " Enable file-type detection, plugins, and auto indentation
 filetype plugin indent on
 
+" File-type associations
+au BufRead,BufNewFile *.md set filetype=markdown
+
 " Miscellaneous
 set cursorline
 set number
