@@ -7,7 +7,7 @@ git_prompt_info() {
 alias gc="git commit -v"
 alias gd="git diff"
 alias gdw="git diff --word-diff=color"
-alias gl="git log -40 --decorate --graph --all --pretty=oneline --abbrev-commit"
+alias gl="git log -40 --decorate --graph --all --oneline"
 alias glp="git log --decorate -p"
 alias gls="git log --decorate --stat"
 alias gs="git status"
