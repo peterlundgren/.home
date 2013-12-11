@@ -3,6 +3,8 @@
     name = Peter Lundgren
 [color]
     ui = true
+[commit]
+    template = ~/.gittemplate
 [core]
     pager = less -FXRS
     editor = vim
