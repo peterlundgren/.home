@@ -4,7 +4,7 @@ alias rezshrc="source ~/.zshrc"
 #
 # The . or source builtin requires at least 1 argument. Overload the no
 # argument version to 'cd ..' instead.
-dot() {
+_dot() {
     file=$1
     if [ $# -gt 0 ]
     then
@@ -14,7 +14,7 @@ dot() {
         cd ..
     fi
 }
-alias .=dot
+alias .=_dot
 alias ..="cd ../.."
 alias ...="cd ../../.."
 alias ....="cd ../../../.."
