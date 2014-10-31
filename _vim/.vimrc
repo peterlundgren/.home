@@ -9,6 +9,7 @@ source ~/.vim/bundles.vim
 " Overriden by ftplugin and rules in .vim/after/ftplugin/<filetype>.vim
 set expandtab
 set shiftwidth=4
+set softtabstop=4
 set tabstop=4
 
 " Enable file-type detection, plugins, and auto indentation
