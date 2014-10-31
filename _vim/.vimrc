@@ -4,6 +4,13 @@ set nocompatible
 " Vundle and bundles configuration
 source ~/.vim/bundles.vim
 
+" Default indentation rules
+"
+" Overriden by ftplugin and rules in .vim/after/ftplugin/<filetype>.vim
+set expandtab
+set shiftwidth=4
+set tabstop=4
+
 " Enable file-type detection, plugins, and auto indentation
 filetype plugin indent on
 
@@ -13,9 +20,6 @@ au BufRead,BufNewFile *.md set filetype=markdown
 " Miscellaneous
 set cursorline
 set number
-set tabstop=4
-set shiftwidth=4
-set expandtab
 set hlsearch
 
 " My Dvorak bindings
