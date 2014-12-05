@@ -3,3 +3,6 @@
 
 # Vundle install
 vim -u ~/.vim/bundles.vim +BundleInstall +qall
+
+# Solarized Colorscheme for Gnome Terminal
+./_zsh/gnome-terminal-colors-solarized/install.sh

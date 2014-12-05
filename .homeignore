@@ -7,3 +7,4 @@ README.md
 .git*
 *.sw[a-z]
 *~
+_zsh/gnome-terminal-colors-solarized*
