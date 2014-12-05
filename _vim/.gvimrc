@@ -9,3 +9,10 @@ set listchars+=trail:·
 set listchars+=extends:>
 set listchars+=precedes:<
 set listchars+=nbsp:·
+
+" Remove menu bar
+set guioptions-=m
+" Remove scrollbar
+set guioptions-=r
+" Remove toolbar
+set guioptions-=T
