@@ -1,5 +1,5 @@
 # get the name of the branch we are on
-git_prompt_info() {
+function git_prompt_info() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return
     echo " ${ref#refs/heads/}"
 }
@@ -13,4 +13,11 @@ alias glp="git log --decorate -p"
 alias gls="git log --decorate --stat"
 alias gs="git status"
 alias gituncommit="git reset --soft HEAD~1"
-alias gitinit="git init && touch README && git add README && git commit README -m \"Initial commit\""
+function gitinit() {
+    git init
+    export GIT_AUTHOR_DATE="1970-01-01T00:00:00+0000"
+    export GIT_COMMITTER_DATE="1970-01-01T00:00:00+0000"
+    git commit --allow-empty -m 'Initial commit'
+    unset GIT_AUTHOR_DATE
+    unset GIT_COMMITTER_DATE
+}
