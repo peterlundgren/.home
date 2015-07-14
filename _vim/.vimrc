@@ -17,6 +17,8 @@ filetype plugin indent on
 
 " File-type associations
 au BufRead,BufNewFile *.md set filetype=markdown
+au BufRead,BufNewFile TODO set filetype=todo
+au BufRead,BufNewFile *.todo set filetype=todo
 
 " Miscellaneous
 set cursorline
