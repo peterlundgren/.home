@@ -1,7 +1,7 @@
 .home
 =====
 
-This is my home. There are many like it, but this one is mine.
+This is my home. There are many projects look like it, but this one is mine.
 
 This repository contains dotfiles, scripts, and plugins that personalize my
 Linux environment.
