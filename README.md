@@ -1,7 +1,9 @@
 .home
 =====
 
-This is my home. There are many like it, but this one is mine.
+This is my home. There are many like it, but this one is mine<sup>[1]</sup>.
+
+  [1]: https://en.wikipedia.org/wiki/Rifleman%27s_Creed
 
 This repository contains dotfiles, scripts, and plugins that personalize my
 Linux environment.
